@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coffee CRM — панель управления</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">☕ Coffee CRM</div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="customers">Клиенты</button>
+      <button class="tab" data-tab="drinks">Напитки</button>
+      <button class="tab" data-tab="orders">Заказы</button>
+    </nav>
+    <a class="docs-link" href="/docs" target="_blank" rel="noopener">API-документация</a>
+  </header>
+
+  <main>
+
+    <!-- Клиенты -->
+    <section id="tab-customers" class="tab-panel active">
+      <h2>Клиенты</h2>
+      <form id="customer-form" class="card form-row" autocomplete="off">
+        <input name="name" placeholder="Имя *" required maxlength="100">
+        <input name="phone" placeholder="Телефон (необязательно)" maxlength="20">
+        <button class="btn btn-primary" type="submit">Добавить клиента</button>
+      </form>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Имя</th><th>Телефон</th><th>Зарегистрирован</th><th></th></tr>
+            </thead>
+            <tbody id="customers-tbody"></tbody>
+          </table>
+        </div>
+        <p id="customers-empty" class="empty hidden">Клиентов пока нет</p>
+      </div>
+    </section>
+
+    <!-- Напитки -->
+    <section id="tab-drinks" class="tab-panel">
+      <h2>Напитки</h2>
+      <form id="drink-form" class="card form-row" autocomplete="off">
+        <input name="name" placeholder="Название *" required maxlength="100">
+        <input name="price" type="number" step="0.01" min="0.01" placeholder="Цена *" required>
+        <select name="category" required>
+          <option value="">Категория *</option>
+          <option value="coffee">coffee</option>
+          <option value="tea">tea</option>
+          <option value="lemonade">lemonade</option>
+          <option value="smoothie">smoothie</option>
+          <option value="other">other</option>
+        </select>
+        <button class="btn btn-primary" id="drink-submit" type="submit">Добавить напиток</button>
+        <button class="btn btn-ghost hidden" id="drink-cancel" type="button">Отмена</button>
+      </form>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Название</th><th>Цена</th><th>Категория</th><th></th></tr>
+            </thead>
+            <tbody id="drinks-tbody"></tbody>
+          </table>
+        </div>
+        <p id="drinks-empty" class="empty hidden">Меню пусто</p>
+      </div>
+    </section>
+
+    <!-- Заказы -->
+    <section id="tab-orders" class="tab-panel">
+      <h2>Заказы</h2>
+
+      <div class="card" id="order-create">
+        <h3>Новый заказ</h3>
+        <label class="field-label" for="order-customer">Клиент</label>
+        <select id="order-customer"></select>
+        <label class="field-label">Позиции</label>
+        <div id="order-items"></div>
+        <div class="form-row">
+          <button class="btn btn-ghost" id="order-add-item" type="button">+ Добавить позицию</button>
+          <div class="order-total">Сумма: <span id="order-total">0 ₽</span></div>
+          <button class="btn btn-primary" id="order-submit" type="button">Создать заказ</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Все заказы</h3>
+        <div id="orders-list"></div>
+        <p class="hint">Статусы: <b>pending</b> — в обработке, <b>ready</b> — готов, <b>completed</b> — выдан</p>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+generator client {
+  provider      = "prisma-client-js"
+  // Движки для glibc-образов (node:20-slim): покрывают сборку на Apple
+  // Silicon (arm64) и развёртывание на типичных серверах (x64)
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  phone        String?  @db.VarChar(20)
+  registeredAt DateTime @default(now()) @map("registered_at")
+  orders       Order[]
+
+  @@map("customers")
+}
+
+model Drink {
+  id         Int         @id @default(autoincrement())
+  name       String      @db.VarChar(100)
+  price      Decimal     @db.Decimal(10, 2)
+  category   String      @db.VarChar(50)
+  orderItems OrderItem[]
+
+  @@map("drinks")
+}
+
+// При удалении напитка (Restrict) старые заказы с этим напитком сохраняются
+model OrderItem {
+  id       Int   @id @default(autoincrement())
+  orderId  Int   @map("order_id")
+  order    Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  drinkId  Int   @map("drink_id")
+  drink    Drink @relation(fields: [drinkId], references: [id], onDelete: Restrict)
+  quantity Int   @default(1)
+
+  @@index([drinkId])
+  @@map("order_items")
+}
+
+// При удалении клиента (Cascade) удаляются все его заказы
+model Order {
+  id         Int         @id @default(autoincrement())
+  customerId Int         @map("customer_id")
+  customer   Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime    @default(now()) @map("created_at")
+  status     String      @default("pending") @db.VarChar(20)
+  items      OrderItem[]
+
+  @@index([customerId])
+  @@map("orders")
+}
